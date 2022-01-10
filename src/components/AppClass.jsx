@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 export default class AppClass extends Component {
   constructor(props) {
@@ -7,32 +7,66 @@ export default class AppClass extends Component {
       todos: [
         {
           id: 1,
-          title: 'Finish React Series',
+          title: "Finish React Series",
           isComplete: false,
         },
         {
           id: 2,
-          title: 'Go Grocery',
+          title: "Go Grocery",
           isComplete: true,
         },
         {
           id: 3,
-          title: 'Take over world',
+          title: "Take over world",
           isComplete: false,
         },
       ],
+
+      inputValue: "",
+      idForTodo: 4,
     };
   }
+
+  addTodo = (event) => {
+    event.preventDefault();
+    this.setState({
+      todos: [
+        ...this.state.todos,
+        {
+          id: this.state.idForTodo,
+          title: this.state.inputValue,
+          isComplete: false,
+        },
+      ],
+    });
+
+    this.setState({ inputValue: "" });
+    this.setState({ idForTodo: this.state.idForTodo + 1 });
+  };
+
+  inputHandler = (event) => {
+    this.setState({
+      inputValue: event.target.value,
+    });
+  };
+
+  deleteTodo = (id) => {
+    this.setState({
+      todos: [...this.state.todos].filter((todo) => todo.id !== id),
+    });
+  };
 
   render() {
     return (
       <div className="todo-app-container">
         <div className="todo-app">
           <h2>Todo App</h2>
-          <form action="#">
+          <form action="#" onSubmit={this.addTodo}>
             <input
               type="text"
               className="todo-input"
+              value={this.state.inputValue}
+              onChange={this.inputHandler}
               placeholder="What do you need to do?"
             />
           </form>
@@ -45,7 +79,10 @@ export default class AppClass extends Component {
                   <span className="todo-item-label">{todo.title}</span>
                   {/* <input type="text" className="todo-item-input" value="Finish React Series" /> */}
                 </div>
-                <button className="x-button">
+                <button
+                  className="x-button"
+                  onClick={() => this.deleteTodo(todo.id)}
+                >
                   <svg
                     className="x-button-icon"
                     fill="none"
