@@ -29,6 +29,7 @@ function App() {
   let [inputValue, setInputValue] = useState("");
   let [idForTodo, setIdForTodo] = useState(4);
   let inputTitle = useRef();
+  let [but, setBut] = useState("all");
 
   let addTodo = (event) => {
     event.preventDefault();
@@ -101,6 +102,40 @@ function App() {
     setTodos(updateTodo);
   };
 
+  const remainingItems = () => {
+    return todos.filter((todo) => !todo.isComplete).length;
+  };
+
+  const checkAll = () => {
+    setTodos(
+      todos.map((todo) => {
+        return { ...todo, isComplete: true };
+      })
+    );
+  };
+
+  const clearCompleted = () => {
+    setTodos(todos.filter((todo) => !todo.isComplete));
+  };
+
+  const all = () => todos;
+  const active = () => todos.filter((todo) => !todo.isComplete);
+  const complete = () => todos.filter((todo) => todo.isComplete);
+
+  let checkBut = (value) => {
+    switch (value) {
+      case "all":
+        return all();
+      case "active":
+        return active();
+      case "complete":
+        return complete();
+      default:
+        console.log("Invalid button");
+    }
+  };
+  let checkButton = (value) => setBut(value);
+
   return (
     <div className="todo-app-container">
       <div className="todo-app">
@@ -115,7 +150,7 @@ function App() {
         {todos.length > 0 ? (
           <>
             <ul className="todo-list">
-              {todos.map((todo, index) => (
+              {checkBut(but).map((todo, index) => (
                 <TodoList
                   todo={todo}
                   completeTodo={completeTodo}
@@ -131,22 +166,47 @@ function App() {
 
             <div className="check-all-container">
               <div>
-                <div className="button">Check All</div>
+                <div className="button" onClick={checkAll}>
+                  Check All
+                </div>
               </div>
 
-              <span>3 items remaining</span>
+              <span>
+                {checkBut(but).length} {but !== "complete" ? "remaining" : ""} items
+              </span>
             </div>
 
             <div className="other-buttons-container">
               <div>
-                <button className="button filter-button filter-button-active">
+                <button
+                  className={`button filter-button ${
+                    but === "all" ? "filter-button-active" : ""
+                  }`}
+                  onClick={() => checkButton("all")}
+                >
                   All
                 </button>
-                <button className="button filter-button">Active</button>
-                <button className="button filter-button">Completed</button>
+                <button
+                  className={`button filter-button ${
+                    but === "active" ? "filter-button-active" : ""
+                  }`}
+                  onClick={() => checkButton("active")}
+                >
+                  Active
+                </button>
+                <button
+                  className={`button filter-button ${
+                    but === "complete" ? "filter-button-active" : ""
+                  }`}
+                  onClick={() => checkButton("complete")}
+                >
+                  Completed
+                </button>
               </div>
               <div>
-                <button className="button">Clear completed</button>
+                <button className="button" onClick={clearCompleted}>
+                  Clear completed
+                </button>
               </div>
             </div>
           </>
