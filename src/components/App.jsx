@@ -4,32 +4,38 @@ import "../App.css";
 import NoTodo from "./NoTodo";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
+import Toggle from "../hooks/Toggle";
+import Localstorage from "../hooks/Localstorage";
 
 function App() {
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      title: "Finish React Series",
-      isComplete: false,
-      isEditting: false,
-    },
-    {
-      id: 2,
-      title: "Go Grocery",
-      isComplete: false,
-      isEditting: false,
-    },
-    {
-      id: 3,
-      title: "Take over world",
-      isComplete: false,
-      isEditting: false,
-    },
-  ]);
+  const [todos,setTodos] = Localstorage('todos',[])
+  // const [todos, setTodos] = useState([
+  //   {
+  //     id: 1,
+  //     title: "Finish React Series",
+  //     isComplete: false,
+  //     isEditting: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Go Grocery",
+  //     isComplete: false,
+  //     isEditting: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Take over world",
+  //     isComplete: false,
+  //     isEditting: false,
+  //   },
+  // ]);
   let [inputValue, setInputValue] = useState("");
-  let [idForTodo, setIdForTodo] = useState(4);
+  let [idForTodo, setIdForTodo] = Localstorage('id',1);
   let inputTitle = useRef();
   let [but, setBut] = useState("all");
+  let [toggleForOne,changeForOne] = Toggle();
+  let [toggleForTwo,changeForTwo] = Toggle(false);
+  let [name, setName] = Localstorage('name','')
 
   let addTodo = (event) => {
     event.preventDefault();
@@ -102,9 +108,13 @@ function App() {
     setTodos(updateTodo);
   };
 
-  const remainingItems = () => {
-    return todos.filter((todo) => !todo.isComplete).length;
-  };
+  // const remainingItems = () => {
+  //   return todos.filter((todo) => !todo.isComplete).length;
+  // };
+
+  // 💡 useMemo ==> it accepts a function and a list of dependencies but it returns the memoized value returned by the passed function. It recalculated the value only when one of its dependencies change. It is useful to avoid expensive calculations on every render when the returned value is not going to change.
+
+  // 💡 useEffect ==> A hook that helps us to perform mutations, subscriptions, timers, logging, and other side effects after all the components has been rendered. The useEffect accepts a function that is imperative in nature and a list of dependencies. When its dependencies change it executes the passed function.
 
   const checkAll = () => {
     setTodos(
@@ -139,6 +149,8 @@ function App() {
   return (
     <div className="todo-app-container">
       <div className="todo-app">
+        <input type="text" placeholder="What is your name? " name="name" className="todo-input" value={name} onChange={(event)=> setName(event.target.value)}/>
+        <p htmlFor="name" className="nameLabel">Hello, {name} </p>
         <h2>Todo App</h2>
 
         <TodoForm
@@ -164,6 +176,12 @@ function App() {
               ))}
             </ul>
 
+            <div className="toggle-container">
+              <div className="toggleOne" onClick={changeForOne}>Toggle One Features</div>
+              <div className="toggleTwo" onClick={changeForTwo}>Toggle Two Features</div>
+            </div>
+
+            {toggleForOne && (
             <div className="check-all-container">
               <div>
                 <div className="button" onClick={checkAll}>
@@ -175,7 +193,10 @@ function App() {
                 {checkBut(but).length} {but !== "complete" ? "remaining" : ""} items
               </span>
             </div>
+            )}
 
+
+            {toggleForTwo && (
             <div className="other-buttons-container">
               <div>
                 <button
@@ -209,6 +230,7 @@ function App() {
                 </button>
               </div>
             </div>
+            )}
           </>
         ) : (
           <NoTodo />
