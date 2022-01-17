@@ -5,6 +5,7 @@ import NoTodo from "./NoTodo";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
 import { TodoContext } from "./../context/TodoContext";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 function App() {
     let {
@@ -54,20 +55,16 @@ function App() {
 
                 {todos.length > 0 ? (
                     <>
-                        <ul className="todo-list">
-                            {checkBut(but).map((todo, index) => (
-                                <TodoList
-                                    todo={todo}
-                                    completeTodo={completeTodo}
-                                    markAsEditting={markAsEditting}
-                                    updateTodo={updateTodo}
-                                    cancelEdit={cancelEdit}
-                                    inputTitle={inputTitle}
-                                    deleteTodo={deleteTodo}
-                                    key={todo.id}
-                                />
-                            ))}
-                        </ul>
+                        <TodoList
+                            checkBut={checkBut}
+                            but={but}
+                            completeTodo={completeTodo}
+                            markAsEditting={markAsEditting}
+                            updateTodo={updateTodo}
+                            cancelEdit={cancelEdit}
+                            inputTitle={inputTitle}
+                            deleteTodo={deleteTodo}
+                        />
 
                         <div className="toggle-container">
                             <div className="toggleOne" onClick={changeForOne}>
@@ -78,65 +75,82 @@ function App() {
                             </div>
                         </div>
 
-                        {toggleForOne && (
-                            <div className="check-all-container">
-                                <div>
+                        <CSSTransition
+                            in={toggleForOne}
+                            timeout={300}
+                            classNames="slide-vertical"
+                            unmountOnExit
+                        >
+                            <div>
+                                <div className="check-all-container">
                                     <div className="button" onClick={checkAll}>
                                         Check All
                                     </div>
-                                </div>
 
-                                <span>
-                                    {checkBut(but).length}{" "}
-                                    {but !== "complete" ? "remaining" : ""} items
-                                </span>
-                            </div>
-                        )}
-
-                        {toggleForTwo && (
-                            <div className="other-buttons-container">
-                                <div>
-                                    <button
-                                        className={`button filter-button ${
-                                            but === "all"
-                                                ? "filter-button-active"
-                                                : ""
-                                        }`}
-                                        onClick={() => checkButton("all")}
-                                    >
-                                        All
-                                    </button>
-                                    <button
-                                        className={`button filter-button ${
-                                            but === "active"
-                                                ? "filter-button-active"
-                                                : ""
-                                        }`}
-                                        onClick={() => checkButton("active")}
-                                    >
-                                        Active
-                                    </button>
-                                    <button
-                                        className={`button filter-button ${
-                                            but === "complete"
-                                                ? "filter-button-active"
-                                                : ""
-                                        }`}
-                                        onClick={() => checkButton("complete")}
-                                    >
-                                        Completed
-                                    </button>
-                                </div>
-                                <div>
-                                    <button
-                                        className="button"
-                                        onClick={clearCompleted}
-                                    >
-                                        Clear completed
-                                    </button>
+                                    <span className="span">
+                                        {checkBut(but).length}{" "}
+                                        {but !== "complete" ? "remaining" : ""}{" "}
+                                        items
+                                    </span>
                                 </div>
                             </div>
-                        )}
+                        </CSSTransition>
+
+                        <CSSTransition
+                            in={toggleForTwo}
+                            timeout={300}
+                            classNames="slide-vertical"
+                            unmountOnExit
+                        >
+                            <div>
+                                <div className="other-buttons-container">
+                                    <div>
+                                        <button
+                                            className={`button filter-button ${
+                                                but === "all"
+                                                    ? "filter-button-active"
+                                                    : ""
+                                            }`}
+                                            onClick={() => checkButton("all")}
+                                        >
+                                            All
+                                        </button>
+                                        <button
+                                            className={`button filter-button ${
+                                                but === "active"
+                                                    ? "filter-button-active"
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                checkButton("active")
+                                            }
+                                        >
+                                            Active
+                                        </button>
+                                        <button
+                                            className={`button filter-button ${
+                                                but === "complete"
+                                                    ? "filter-button-active"
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                checkButton("complete")
+                                            }
+                                        >
+                                            Completed
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="button"
+                                            onClick={clearCompleted}
+                                        >
+                                            Clear completed
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </CSSTransition>
                     </>
                 ) : (
                     <NoTodo />
