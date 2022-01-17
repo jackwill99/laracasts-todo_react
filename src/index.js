@@ -4,10 +4,13 @@ import "./index.css";
 import App from "./components/App";
 // import AppClass from "./components/AppClass";
 import reportWebVitals from "./reportWebVitals";
+import TodoContextComponent from './context/TodoContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <TodoContextComponent>
+      <App />
+    </TodoContextComponent>
     {/* <AppClass /> */}
   </React.StrictMode>,
   document.getElementById("root")
